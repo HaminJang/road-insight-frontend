@@ -11,25 +11,37 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [streaming, setStreaming] = useState(false)
   const [captured, setCaptured] = useState(false)
+  const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment')
 
-  const startCamera = useCallback(async () => {
+  const startCamera = useCallback(async (mode: 'environment' | 'user') => {
     console.log('버튼 클릭됨')
     try {
+      // 기존 스트림 종료
+      if (videoRef.current?.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream
+        stream.getTracks().forEach(track => track.stop())
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: true
+        video: { facingMode: mode }
       })
       console.log('스트림 성공', stream)
       if (videoRef.current) {
         videoRef.current.srcObject = stream
         await videoRef.current.play()
         setStreaming(true)
-        console.log('streaming true 설정됨')
       }
     } catch (err) {
       console.log('카메라 오류', err)
       alert('카메라 오류: ' + err)
     }
   }, [])
+
+  const switchCamera = useCallback(async () => {
+    const newMode = facingMode === 'environment' ? 'user' : 'environment'
+    setFacingMode(newMode)
+    await startCamera(newMode)
+  }, [facingMode, startCamera])
 
   const capture = useCallback(() => {
     if (!videoRef.current || !canvasRef.current) return
@@ -55,7 +67,7 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
     <div style={{ position: 'relative', width: '100%' }}>
       {!streaming && !captured && (
         <button
-          onClick={startCamera}
+          onClick={() => startCamera(facingMode)}
           style={{
             width: '100%',
             padding: '16px',
@@ -93,6 +105,26 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
             borderRadius: '8px'
           }} />
         </div>
+
+        {/* 전면/후면 전환 버튼 */}
+        <button
+          onClick={switchCamera}
+          style={{
+            position: 'absolute',
+            top: '12px',
+            right: '12px',
+            padding: '8px 12px',
+            background: 'rgba(0,0,0,0.5)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '13px',
+            cursor: 'pointer'
+          }}
+        >
+          {facingMode === 'environment' ? '전면' : '후면'}
+        </button>
+
         <p style={{
           position: 'absolute',
           bottom: '70px',
