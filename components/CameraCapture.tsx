@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useRef, useState, useCallback } from 'react'
@@ -60,7 +59,7 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
   }, [onCapture])
 
   return (
-    <div style={{ position: 'relative', width: '100%' }}>
+    <div style={{ width: '100%' }}>
       {!streaming && !captured && (
         <button
           onClick={() => startCamera(facingMode)}
@@ -80,31 +79,10 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
       )}
 
       <div style={{ display: streaming ? 'block' : 'none' }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          marginBottom: '8px'
-        }}>
-          <button
-            onClick={switchCamera}
-            style={{
-              padding: '8px 16px',
-              background: '#333',
-              color: 'white',
-              border: 'none',
-              borderRadius: '20px',
-              fontSize: '14px',
-              cursor: 'pointer'
-            }}
-          >
-            {facingMode === 'environment' ? '전면으로' : '후면으로'}
-          </button>
-        </div>
-
         <div style={{ position: 'relative' }}>
           <video
             ref={videoRef}
-            style={{ width: '100%', borderRadius: '8px' }}
+            style={{ width: '100%', borderRadius: '8px', display: 'block' }}
             playsInline
             autoPlay
             muted
@@ -125,7 +103,7 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
           </div>
           <p style={{
             position: 'absolute',
-            bottom: '70px',
+            bottom: '16px',
             width: '100%',
             textAlign: 'center',
             color: 'white',
@@ -134,14 +112,19 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
           }}>
             파손 부위를 녹색 박스 안에 맞춰주세요
           </p>
+        </div>
+
+        {/* 버튼들을 카메라 아래에 배치 */}
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          marginTop: '12px'
+        }}>
           <button
             onClick={capture}
             style={{
-              position: 'absolute',
-              bottom: '16px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              padding: '12px 32px',
+              flex: 1,
+              padding: '14px',
               background: '#1D9E75',
               color: 'white',
               border: 'none',
@@ -151,6 +134,20 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
             }}
           >
             촬영
+          </button>
+          <button
+            onClick={switchCamera}
+            style={{
+              padding: '14px 20px',
+              background: '#333',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '14px',
+              cursor: 'pointer'
+            }}
+          >
+            {facingMode === 'environment' ? '전면' : '후면'}
           </button>
         </div>
       </div>
