@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useRef, useState, useCallback } from 'react'
@@ -14,25 +15,20 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
   const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment')
 
   const startCamera = useCallback(async (mode: 'environment' | 'user') => {
-    console.log('버튼 클릭됨')
     try {
-      // 기존 스트림 종료
       if (videoRef.current?.srcObject) {
         const stream = videoRef.current.srcObject as MediaStream
         stream.getTracks().forEach(track => track.stop())
       }
-
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: mode }
       })
-      console.log('스트림 성공', stream)
       if (videoRef.current) {
         videoRef.current.srcObject = stream
         await videoRef.current.play()
         setStreaming(true)
       }
     } catch (err) {
-      console.log('카메라 오류', err)
       alert('카메라 오류: ' + err)
     }
   }, [])
@@ -83,78 +79,80 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
         </button>
       )}
 
-      <div style={{ position: 'relative', display: streaming ? 'block' : 'none' }}>
-        <video
-          ref={videoRef}
-          style={{ width: '100%', borderRadius: '8px' }}
-          playsInline
-          autoPlay
-          muted
-        />
+      <div style={{ display: streaming ? 'block' : 'none' }}>
         <div style={{
-          position: 'absolute',
-          inset: 0,
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'flex-end',
+          marginBottom: '8px'
         }}>
-          <div style={{
-            width: '60%',
-            height: '40%',
-            border: '2px solid #00ff00',
-            borderRadius: '8px'
-          }} />
+          <button
+            onClick={switchCamera}
+            style={{
+              padding: '8px 16px',
+              background: '#333',
+              color: 'white',
+              border: 'none',
+              borderRadius: '20px',
+              fontSize: '14px',
+              cursor: 'pointer'
+            }}
+          >
+            {facingMode === 'environment' ? '전면으로' : '후면으로'}
+          </button>
         </div>
 
-        {/* 전면/후면 전환 버튼 */}
-        <button
-          onClick={switchCamera}
-          style={{
+        <div style={{ position: 'relative' }}>
+          <video
+            ref={videoRef}
+            style={{ width: '100%', borderRadius: '8px' }}
+            playsInline
+            autoPlay
+            muted
+          />
+          <div style={{
             position: 'absolute',
-            top: '12px',
-            right: '12px',
-            padding: '8px 16px',
-            background: 'rgba(0,0,0,0.7)',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <div style={{
+              width: '60%',
+              height: '40%',
+              border: '2px solid #00ff00',
+              borderRadius: '8px'
+            }} />
+          </div>
+          <p style={{
+            position: 'absolute',
+            bottom: '70px',
+            width: '100%',
+            textAlign: 'center',
             color: 'white',
-            border: '1px solid white',
-            borderRadius: '20px',
             fontSize: '14px',
-            cursor: 'pointer',
-	    zIndex: 10
-          }}
-        >
-          {facingMode === 'environment' ? '전면' : '후면'}
-        </button>
-
-        <p style={{
-          position: 'absolute',
-          bottom: '70px',
-          width: '100%',
-          textAlign: 'center',
-          color: 'white',
-          fontSize: '14px',
-          margin: 0
-        }}>
-          파손 부위를 녹색 박스 안에 맞춰주세요
-        </p>
-        <button
-          onClick={capture}
-          style={{
-            position: 'absolute',
-            bottom: '16px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            padding: '12px 32px',
-            background: '#1D9E75',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '16px',
-            cursor: 'pointer'
-          }}
-        >
-          촬영
-        </button>
+            margin: 0
+          }}>
+            파손 부위를 녹색 박스 안에 맞춰주세요
+          </p>
+          <button
+            onClick={capture}
+            style={{
+              position: 'absolute',
+              bottom: '16px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              padding: '12px 32px',
+              background: '#1D9E75',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '16px',
+              cursor: 'pointer'
+            }}
+          >
+            촬영
+          </button>
+        </div>
       </div>
 
       <canvas ref={canvasRef} style={{ display: 'none' }} />
