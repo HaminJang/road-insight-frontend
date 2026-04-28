@@ -119,7 +119,7 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
             border: '1px solid white',
             borderRadius: '20px',
             fontSize: '14px',
-            cursor: 'pointer'
+            cursor: 'pointer',
 	    zIndex: 10
           }}
         >
