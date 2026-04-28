@@ -113,13 +113,14 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
             position: 'absolute',
             top: '12px',
             right: '12px',
-            padding: '8px 12px',
-            background: 'rgba(0,0,0,0.5)',
+            padding: '8px 16px',
+            background: 'rgba(0,0,0,0.7)',
             color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '13px',
+            border: '1px solid white',
+            borderRadius: '20px',
+            fontSize: '14px',
             cursor: 'pointer'
+	    zIndex: 10
           }}
         >
           {facingMode === 'environment' ? '전면' : '후면'}
